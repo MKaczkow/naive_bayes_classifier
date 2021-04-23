@@ -33,8 +33,8 @@ sns.scatterplot(data=main_df, x='asymmetry coef.', y='perimeter', hue='class')
 plt.figure(6)
 sns.scatterplot(data=main_df, x='asymmetry coef.', y='area', hue='class')
 
-plt.figure(7)
-sns.scatterplot(data=main_df, y='compactness.', x='groove length', hue='class')
+#plt.figure(7)
+#sns.scatterplot(data=main_df, y='compactness.', x='groove length', hue='class')
 
 plt.figure(8)
 sns.scatterplot(data=main_df, y='compactness', x='kernel width', hue='class')
@@ -42,7 +42,7 @@ sns.scatterplot(data=main_df, y='compactness', x='kernel width', hue='class')
 plt.figure(9)
 sns.scatterplot(data=main_df, y='compactness', x='kernel length', hue='class')
 
-plt.figure(9)
+plt.figure(19)
 sns.scatterplot(data=main_df, y='compactness', x='area', hue='class')
 
 plt.figure(10)
