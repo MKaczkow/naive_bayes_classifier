@@ -33,6 +33,7 @@ sns.scatterplot(data=main_df, x='asymmetry coef.', y='perimeter', hue='class')
 plt.figure(6)
 sns.scatterplot(data=main_df, x='asymmetry coef.', y='area', hue='class')
 
+#TODO: repair 'compactness' problem, better visualisation (subplots)
 #plt.figure(7)
 #sns.scatterplot(data=main_df, y='compactness.', x='groove length', hue='class')
 

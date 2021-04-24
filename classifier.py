@@ -4,20 +4,29 @@ Author: Maciej Kaczkowski
 '''
 
 
+import numpy as np
 import pandas as pd
 
 
-# reading clean dataset
-main_df = pd.read_csv(r'seeds_dataset_clean.txt', header=None, sep='\t')
+class NaiveBayesClassifier:
 
-# reading non-clean dataset (not yet fully functional)
-# train_df = pd.read_csv(r'seeds_dataset.txt', header=None, sep='\n', skipinitialspace=True)
-# train_df = train_df[0].str.split('\t', expand=True)
+    def fit(self, X, y):
+        n_samples, n_features = X.shape
+        self.classes = np.unique(y)
+        n_classes = len(self.classes)
 
-# pre-training operations
-main_df.columns = ['area', 'perimeter', 'compactness', 'kernel length',
-                    'kernel width', 'asymmetry coef.', 'groove length', 'class']
+        # init mean, var, priors
+        self.mean = np.zeros((n_classes, n_features), dtype=np.float64)
+        self.var = np.zeros((n_classes, n_features), dtype=np.float64)
+        self.priors = np.zeros(n_classes, dtype=np.float64)
 
-print(main_df.head().to_string())
-print(main_df.info())
-print(main_df.describe())
+        for c in self.classes:
+            X_c = X[c == y]
+            self.mean[c, :] = X_c.mean(axis=0)
+            self.var[c, :] = X_c.var(axis=0)
+
+    def predict(self):
+        pass
+
+    def predict_one(self):
+        pass
