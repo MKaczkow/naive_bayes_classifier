@@ -37,4 +37,7 @@ nbc = NaiveBayesClassifier()
 nbc.fit(X_train, y_train)
 predictions = nbc.predict(X_test)
 
+#TODO: add other metrics (recall, confusion matrix, etc.)
 print("NBC accuracy:", get_accuracy(y_test, predictions))
+
+#TODO: check split ratio induced changes
