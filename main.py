@@ -6,13 +6,23 @@ Author: Maciej Kaczkowski
 
 import numpy as np
 import pandas as pd
+import seaborn as sns
 import matplotlib.pyplot as plt
+
+from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, accuracy_score
+
 from classifier import NaiveBayesClassifier
 
 
-def get_accuracy(y_true, y_pred):
-    accuracy = np.sum(y_true == y_pred) / len(y_true)
-    return accuracy
+def calculate_metrics(y_test, y_pred):
+    cnf_mat = confusion_matrix(y_test, y_pred)
+    acc = accuracy_score(y_test, y_pred)
+    precision = precision_score(y_test, y_pred, average='macro')
+    recall = recall_score(y_test, y_pred, average='macro')
+    f_score = f1_score(y_test, y_pred, average='macro')
+    print('Accuracy: {}\nPrecision: {}\nRecall: {}\nF1_score: {}'.format(
+        acc, precision, recall, f_score))
+    return cnf_mat
 
 
 def split_dataset(dataset: pd.DataFrame, train_frac):
@@ -27,11 +37,6 @@ main_df = pd.read_csv(r'seeds_dataset_clean.txt', header=None, sep='\t')
 main_df.columns = ['area', 'perimeter', 'compactness', 'kernel length',
                     'kernel width', 'asymmetry coef.', 'groove length', 'class']
 
-#TODO: reading non-fully-clean dataset
-
-# reading non-clean dataset (not yet fully functional)
-# train_df = pd.read_csv(r'seeds_dataset.txt', header=None, sep='\n', skipinitialspace=True)
-# train_df = train_df[0].str.split('\t', expand=True)
 
 nbc = NaiveBayesClassifier()
 
@@ -45,15 +50,46 @@ for idx, train_frac in enumerate(train_fractions):
     # alternatively sklearn.model_selection.train_test_split can be used
     nbc.fit(X_train, y_train)
     predictions = nbc.predict(X_test)
-    prediction_accuracies[idx] = get_accuracy(y_test, predictions)
+    prediction_accuracies[idx] = accuracy_score(y_test, predictions)
 
 best_train_fraction = train_fractions[np.argmax(prediction_accuracies)]
+
+
+# plotting prediction_accuracy(train_fractions)
+plt.figure(1)
 plt.plot(train_fractions, prediction_accuracies)
+plt.title('Finding best train/(train+test) ratio')
 plt.xlabel('train_fraction')
 plt.ylabel('prediction_accuracy')
 
 
-#TODO: add other metrics (recall, confusion matrix, etc.)
+# plotting confusion matrix and classification metrics
+X_train, X_test, y_train, y_test = split_dataset(main_df, train_frac=best_train_fraction)
+nbc.fit(X_train, y_train)
+predictions = nbc.predict(X_test)
+
+plt.figure(2)
+print("\nNormal dataset metrics: ")
+cnf_mat = calculate_metrics(y_test, predictions)
+sns.heatmap(cnf_mat, annot=True, fmt='g')
+plt.title('Normal dataset confusion matrix')
+plt.ylabel('True label')
+plt.xlabel('Predicted label')
+
+
+# checking if shuffling data makes any difference
+shuffled_df = main_df.sample(frac=1)
+X_train, X_test, y_train, y_test = split_dataset(shuffled_df, train_frac=best_train_fraction)
+nbc.fit(X_train, y_train)
+predictions = nbc.predict(X_test)
+
+plt.figure(3)
+print("\nShuffled dataset metrics: ")
+cnf_mat = calculate_metrics(y_test, predictions)
+sns.heatmap(cnf_mat, annot=True, fmt='g')
+plt.title('Shuffled dataset confusion matrix')
+plt.ylabel('True label')
+plt.xlabel('Predicted label')
 
 
 plt.show()
