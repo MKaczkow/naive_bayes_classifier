@@ -10,6 +10,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, accuracy_score
+from sklearn.naive_bayes import GaussianNB
 
 from classifier import NaiveBayesClassifier
 
@@ -39,25 +40,25 @@ main_df.columns = ['area', 'perimeter', 'compactness', 'kernel length',
 
 
 nbc = NaiveBayesClassifier()
-
+gnb = GaussianNB()
 
 # finding best train/(train+test) ratio
 train_fractions = np.linspace(start=0.1, stop=0.9, num=17)
-prediction_accuracies = np.zeros((17, 1))
+nbc_prediction_accuracies = np.zeros((17, 1))
 
 for idx, train_frac in enumerate(train_fractions):
     X_train, X_test, y_train, y_test = split_dataset(main_df, train_frac=train_frac)
     # alternatively sklearn.model_selection.train_test_split can be used
     nbc.fit(X_train, y_train)
     predictions = nbc.predict(X_test)
-    prediction_accuracies[idx] = accuracy_score(y_test, predictions)
+    nbc_prediction_accuracies[idx] = accuracy_score(y_test, predictions)
 
-best_train_fraction = train_fractions[np.argmax(prediction_accuracies)]
+best_train_fraction = train_fractions[np.argmax(nbc_prediction_accuracies)]
 
 
 # plotting prediction_accuracy(train_fractions)
 plt.figure(1)
-plt.plot(train_fractions, prediction_accuracies)
+plt.plot(train_fractions, nbc_prediction_accuracies)
 plt.title('Finding best train/(train+test) ratio')
 plt.xlabel('train_fraction')
 plt.ylabel('prediction_accuracy')
@@ -66,7 +67,9 @@ plt.ylabel('prediction_accuracy')
 # plotting confusion matrix and classification metrics
 X_train, X_test, y_train, y_test = split_dataset(main_df, train_frac=best_train_fraction)
 nbc.fit(X_train, y_train)
-predictions = nbc.predict(X_test)
+nbc_predictions = nbc.predict(X_test)
+gnb.fit(X_train, y_train)
+gnb_predictions = gnb.predict(X_test)
 
 plt.figure(2)
 print("\nNormal dataset metrics: ")
