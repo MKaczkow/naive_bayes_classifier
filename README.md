@@ -7,6 +7,3 @@ Running:
 Download all files and run "main.py" or "linear_separation.py" using command line or any python IDE.
 
 Coded for WSI course in Summer '21 semester.  
-
-TODO: compare with Keras/ scikit-learn NaiveBayes or LinearRegression  
-
